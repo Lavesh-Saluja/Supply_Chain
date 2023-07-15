@@ -13,6 +13,8 @@ function SupplyChainpage() {
   const [upc_cartonsValue, setUPC_CartonsValue] = useState([]);
   const [containerID, setContainerID] = useState("");
   const [popupDetails, setPopupDetails] = useState(false);
+  const [receivedValue, setReceivedValue] = useState("");
+  const [receivedCartons, setReceivedCartons] = useState([]);
   const dataRef=useRef();
   const [orderDetails, setOrderDetails] = useState({
     containerId:0,
@@ -36,6 +38,10 @@ function SupplyChainpage() {
       element = document.getElementById("cartonsValue");
        element.value = "";
       console.log(element)
+    }
+    else if (e.target.name == "receivedCartons") {
+      setReceivedCartons([...receivedCartons, BigNumber.from(receivedValue)]);
+      console.log(receivedCartons);
     }
     else {
          setOrderDetails({
@@ -107,7 +113,7 @@ function SupplyChainpage() {
   const containerUnload = async () => {
      const signer = await getProviderOrSigner(true);
     const contract = new Contract(CONTRACT_ADDRESS, abi, signer);
-    const tx = await contract.containerUnload(Number(containerID), orderDetails.dateUnloaded, orderDetails.locationUnloaded);
+    const tx = await contract.containerUnload(Number(containerID), orderDetails.dateUnloaded, orderDetails.locationUnloaded,receivedCartons);
     await tx.wait();
   }
   const connectWallet = async () => {
@@ -186,7 +192,7 @@ function SupplyChainpage() {
             if(i%2==0)
             return (<>
               <p>
-                <b>UPC</b>:{dataRef.current[6][i].toString()} <b>cartons value</b>:{dataRef.current[6][i+1].toString()}
+                <b>UPC</b>:{dataRef.current[6][i].toString()} <b>cartons value</b>:{dataRef.current[6][i + 1].toString()}{dataRef.current[7][i / 2]!=undefined?<span><b>Received value:</b>{dataRef.current[7][i / 2].toString()}</span>:<></>}
             </p>
             </>)
           })
@@ -244,6 +250,11 @@ function SupplyChainpage() {
               <input type="text" placeholder="Container ID" className="clear" name="containerId" onChange={(e) => setDetails(e)} />
               <input type="text" placeholder="date of Unload" className="clear" name="dateUnloaded" onChange={(e) => setDetails(e)} />
               <input type="text" placeholder="location of Unload" className="clear" name="locationUnloaded" onChange={(e) => setDetails(e)} />
+              <div className="product">
+              <input type="text" placeholder="Received Value" className="clear" name="locationUnloaded" onChange={(e) => setReceivedValue(e.target.value)} />
+              <button type="submit" name="receivedCartons" onClick={(e) => setDetails(e)}>+</button>
+              </div>
+              
               <button type="submit" onClick={containerUnload}>Unload Container</button>
             </div>
            

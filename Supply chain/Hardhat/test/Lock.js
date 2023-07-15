@@ -21,8 +21,7 @@ describe("FileShare", function () {
     vessel: 12,
     voyage: 34,
       }
-      const upc = [BigNumber.from("1"),BigNumber.from("2"),BigNumber.from("3")];
-      const cartonsValue = [BigNumber.from("1"),BigNumber.from("2"),BigNumber.from("3")];
+      const upc = [BigNumber.from("1"),BigNumber.from("2"),BigNumber.from("3"),BigNumber.from("1"),BigNumber.from("2"),BigNumber.from("3")];
       await supplyChain.generateOrder(
           Number(orderDetails.containerId),
         orderDetails.dateOfDept,
@@ -31,11 +30,14 @@ describe("FileShare", function () {
         orderDetails.expArrivalLocation,
         Number(orderDetails.vessel),
         Number(orderDetails.voyage),
-        upc,
-        cartonsValue)
+        upc)
    console.log('------------------------------------');
    console.log(await supplyChain.getOrderbyContainerID(123));
-   console.log('------------------------------------');
+    console.log('------------------------------------');
+    await supplyChain.containerUnload(Number("123"), "23/09/23", "Kamptee", [BigNumber.from("1"), BigNumber.from("2"), BigNumber.from("3")]);
+      console.log('------------------------------------');
+   console.log(await supplyChain.getOrderbyContainerID(123));
+    console.log('------------------------------------');
   });
    
   

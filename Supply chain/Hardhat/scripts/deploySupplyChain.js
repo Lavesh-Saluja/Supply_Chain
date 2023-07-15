@@ -12,11 +12,10 @@ async function main() {
   const SupplyChainContract=await hre.ethers.getContractFactory("SupplyChain");
   const contract = await SupplyChainContract.deploy();
   await contract.deployed();
-    console.log("Contract Address", contract.address);//0xAf91Af02a85Fbbeb950992451709cC66375B7afe
+    console.log("Contract Address", contract.address);//0xd110a41b1439Ff4DB51F3C18fDBac1306bCe0DcA
     console.log("Sleeping.....");
   // Wait for etherscan to notice that the contract has been deployed
   await sleep(40000);
-
   // Verify the contract after deploying
   await hre.run("verify:verify", {
     address: contract.address,

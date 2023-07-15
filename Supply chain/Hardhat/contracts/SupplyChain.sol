@@ -18,7 +18,8 @@ contract SupplyChain {
         string locationUnloaded;
         uint256 vessel;
         uint256 voyage;
-        uint256[] UPC_ShippedCartons; //both value are in pair of indexes For Eg:(UPC,ShippedCartons): (0,1) (2,3) ...
+        uint256[] UPC_ShippedCartons;//both value are in pair of indexes For Eg:(UPC,ShippedCartons): (0,1) (2,3) ...
+        uint256[] recievedCartons;
     }
     mapping(uint256 => OrderDetails) public containerDetail;
     mapping(uint256=>bool)internal container; //for checking that container id should not be duplicated 
@@ -42,17 +43,18 @@ contract SupplyChain {
             newContainer.vessel = _vessel;
             newContainer.voyage = _voyage;
             newContainer.UPC_ShippedCartons=UPC_ShippedCartons;
-            container[_container]=true;
-           
+            container[_container]=true; 
     }
 
-    function getOrderbyContainerID(uint256 _containerID) public view returns (string memory, string memory, string memory, string memory, uint256, uint256, uint[] memory){
+    function getOrderbyContainerID(uint256 _containerID) public view returns (string memory, string memory, string memory, string memory, uint256, uint256, uint[] memory, uint256[] memory){
         OrderDetails storage thisContainer = containerDetail[_containerID];
-        return (thisContainer.dateOfDept, thisContainer.placeOfDept, thisContainer.expectArrivalDate, thisContainer.expArrivalLocation, thisContainer.vessel, thisContainer.voyage, thisContainer.UPC_ShippedCartons);
+        return (thisContainer.dateOfDept, thisContainer.placeOfDept, thisContainer.expectArrivalDate, thisContainer.expArrivalLocation, thisContainer.vessel, thisContainer.voyage, thisContainer.UPC_ShippedCartons, thisContainer.recievedCartons);
     } 
-    function containerUnload(uint256 _containerID, string memory _dateUnloaded, string memory _locationUnloaded ) public {
+    function containerUnload(uint256 _containerID, string memory _dateUnloaded, string memory _locationUnloaded, uint256[] memory _recievedCartons ) public {
         OrderDetails storage thisContainer = containerDetail[_containerID];
+        require(thisContainer.UPC_ShippedCartons.length/2 == _recievedCartons.length,"Please recived cartoons for each");
         thisContainer.dateUnloaded = _dateUnloaded;
         thisContainer.locationUnloaded = _locationUnloaded;
+        thisContainer.recievedCartons = _recievedCartons;
     }
 }
